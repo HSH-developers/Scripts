@@ -60,15 +60,14 @@ def extract_file_images_and_models(workbook):
         
         listShape = enumerate(sheet.Shapes)
         images = [shape for i, shape in enumerate(sheet.Shapes) if shape.Name.startswith('Picture')]
-        models = [shape for i, shape in enumerate(sheet.Shapes) if shape.Name.startswith('3D Model')]
 
-        return images, models
+        return images
         
 
 def upload_data(filepath, workbook) :
 
     rows_data = get_rows_data(filepath)
-    images, models = extract_file_images_and_models(workbook)
+    images = extract_file_images_and_models(workbook)
     
     model_dict = {}
     script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
@@ -80,13 +79,12 @@ def upload_data(filepath, workbook) :
         with open(abs_file_path, "rb") as data :
             model_dict[furniture_name] = data
 
-    print(model_dict)
 
     
     for i in range(len(rows_data)) :
         num, name, brand , price, category ,ftype, dimension, description = rows_data[i]
         imageShape = images[i]
-        modelShape = models[i]
+
         
         try:
             imageShape.Copy()
@@ -94,22 +92,28 @@ def upload_data(filepath, workbook) :
 
          
             model = model_dict[name]
-            print(model)
-            # post_data = {
-            #     'furnitureName' : name,
-            #     'furnitureBrand' : brand,
-            #     'furnitureType' : ftype,
-            #     'furnitureCategory' : category,
-            #     'furnitureDimension' : dimension,
-            #     'furniturePrice' : price,
-            #     'image' : image,
-            #     'model' : model
-            # }
+
+            post_data = {
+                'furnitureName' : name,
+                'furnitureBrand' : brand,
+                'furnitureType' : ftype,
+                'furnitureCategory' : category,
+                'furnitureDimension' : dimension,
+                'furniturePrice' : price,
+                # 'image' : image
+                'model' : model
+            }
             
-            # print(post_data)
+            print(post_data)
+            
+            
+            r = requests.post('http://127.0.0.1:3000/api/furnitures/uploadFurniture', post_data)
+            print(r.content)
+            return
 
         except:
             continue
+
 
 
 browseButton_Excel = tk.Button(text='Import Excel File', command=getExcel, bg='green', fg='white', font=('helvetica', 12, 'bold'))
