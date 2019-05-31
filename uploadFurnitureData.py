@@ -79,7 +79,9 @@ def upload_data(filepath, workbook) :
         with open(abs_file_path, "rb") as data :
             model_dict[furniture_name] = data
 
-
+    dir = os.getcwd()
+    path_destination = "{0}\\{1}\\".format(dir, "images")
+    print(path_destination)
     
     for i in range(len(rows_data)) :
         num, name, brand , price, category ,ftype, dimension, description = rows_data[i]
@@ -89,27 +91,28 @@ def upload_data(filepath, workbook) :
         try:
             imageShape.Copy()
             image = ImageGrab.grabclipboard()
+            image.save('{0}{1}.jpg'.format(path_destination, name), 'jpeg')
 
          
-            model = model_dict[name]
+            # model = model_dict[name]
 
-            post_data = {
-                'furnitureName' : name,
-                'furnitureBrand' : brand,
-                'furnitureType' : ftype,
-                'furnitureCategory' : category,
-                'furnitureDimension' : dimension,
-                'furniturePrice' : price,
-                # 'image' : image
-                'model' : model
-            }
+            # post_data = {
+            #     'furnitureName' : name,
+            #     'furnitureBrand' : brand,
+            #     'furnitureType' : ftype,
+            #     'furnitureCategory' : category,
+            #     'furnitureDimension' : dimension,
+            #     'furniturePrice' : price,
+            #     # 'image' : image
+            #     'model' : model
+            # }
             
-            print(post_data)
+            # print(post_data)
             
             
-            r = requests.post('http://127.0.0.1:3000/api/furnitures/uploadFurniture', post_data)
-            print(r.content)
-            return
+            # r = requests.post('http://127.0.0.1:3000/api/furnitures/uploadFurniture', post_data)
+            # print(r.content)
+            # return
 
         except:
             continue
